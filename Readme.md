@@ -3,7 +3,7 @@
 The goal is to create a program that can convert Roman numerals to numeric numbers and also the other way around.
 How are you going to do this? *TDD* baby!
 
-[Dont like TDD?](DontLikeTDD.md)
+[Dont like TDD?](https://raw.githubusercontent.com/dburriss/RomanNumeralsKata/master/DontLikeTDD.md)
 
 ## Use cases
 
