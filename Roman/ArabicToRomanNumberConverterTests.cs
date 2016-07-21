@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using FluentAssertions;
 using Xunit;
 
 namespace Roman
@@ -25,7 +28,12 @@ namespace Roman
 
         [Theory]
         [InlineData(4, "IV")]
-        public void Convert_Four_ToRomanEquivalent(int number, string expected)
+        [InlineData(9, "IX")]
+        [InlineData(40, "XL")]
+        [InlineData(90, "XC")]
+        [InlineData(400, "CD")]
+        [InlineData(900, "CM")]
+        public void Convert_SubtractedValues_ToRomanEquivalent(int number, string expected)
         {
             // arrange
             ArabicToRomanNumberConverter sut = CreateSut();
@@ -56,25 +64,71 @@ namespace Roman
             // assert
             result.Should().Be(expected);
         }
+
+        [Theory]
+        [InlineData(6, "VI")]
+        [InlineData(11, "XI")]
+        public void ShouldConvert_ToCompositeRomanCharacter_When(int number, string expected)
+        {
+            // arrange
+            ArabicToRomanNumberConverter sut = CreateSut();
+
+            // act
+            string result = sut.Convert(number);
+
+            // assert
+            result.Should().Be(expected);
+        }
+
+
+
     }
 
     public class ArabicToRomanNumberConverter
     {
+        private SortedList<int, string> _convertionMap = new SortedList<int, string>
+        {
+            {1000, "M"},
+            {900, "CM"},
+            {500, "D"},
+            {400, "CD" },
+            {100, "C"},
+            {90, "XC"},
+            {50, "L"},
+            {40, "XL"},
+            {10, "X"},
+            {9, "IX"},
+            {5, "V"},
+            {4, "IV"},
+            {1, "I"}
+        }; 
+
+
         public string Convert(int number)
         {
-            switch (number)
+            StringBuilder sb = new StringBuilder();
+
+            while (number > 0)
             {
-                case 1000: return "M";
-                case 500: return "D";
-                case 100: return "C";
-                case 50: return "L";
-                case 10: return "X";
-                case 5: return "V";
-                case 1: return "I";
-                case 4:return "IV";
+                KeyValuePair<int, string> numeralMap = _convertionMap.Last(v => v.Key <= number);
+                number = number - numeralMap.Key;
+                sb.Append(numeralMap.Value);
             }
 
-            return new string('I', number);
+            //if (number > 5 && number < 9)
+            //{
+            //    sb.Append("V").Append(_convertionMap[number - 5]);
+            //}
+            //else if (number > 1 && number <= 3)
+            //{
+            //    sb.Append("I").Append(Convert(number - 1));
+            //}
+            //else
+            //{
+            //    return _convertionMap[number];
+            //}
+
+            return sb.ToString();
         }
     }
 }
